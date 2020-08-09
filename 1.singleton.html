@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button id="login">点击浮窗</button>
+</body>
+<script>
+    // 单例模式的定义是:保证一个类仅有一个实例，并且提供一个访问它的全局访问点
+    // 传统的单例模式(1,2,3),以类为中心,但是javascript是一门无类的语言
+
+    // 两种写法
+    // 1.
+    // var Singleton = function (name) {
+    //     this.name = name;
+    // }
+    // Singleton.instance = null;
+    // Singleton.prototype.getName = function() {
+    //     alert(this.name);
+    // }
+    // Singleton.getInstance = function (name) {
+    //     if (!this.instance) {
+    //         this.instance = new Singleton(name);
+    //     }
+    //     return this.instance;
+    // }
+
+    // var a = Singleton.getInstance('a');
+    // var b = Singleton.getInstance('b');
+
+    // console.log(a === b)
+
+    // 2.
+    // var Singleton = function (name) {
+    //     this.name = name;
+    // }
+    // Singleton.prototype.getName = function () {
+    //     alert(this.name);
+    // }
+    // Singleton.getInstance = (function () {
+    //     var instance = null;
+    //     return function(name) {
+    //         if (!instance) {
+    //             instance = new Singleton(name);
+    //         }
+    //         return instance;
+    //     }
+    // })();
+    // var a = Singleton.getInstance('a');
+    // var b = Singleton.getInstance('b');
+
+    // console.log(a === b)
+
+    // 上面的两种方式缺点就是必须知道这个是单例类，而不是new xxx的形式
+    // 3.透明的单例模式
+    // var CreateDiv = (function() {
+    //     var instance;
+        
+    //     var CreateDiv = function(html) {
+    //         if (instance) {
+    //             return instance;
+    //         }
+    //         this.html = html;
+    //         this.init();
+    //         return instance = this;
+    //     }
+
+    //     CreateDiv.prototype.init = function () {
+    //         var div = document.createElement('div');
+    //         div.innerHTML = this.html;
+    //         document.body.append(div);
+    //     }
+    //     return CreateDiv;
+    // })();
+
+    // var a = new CreateDiv('a');
+    // var b = new CreateDiv('b');
+    // console.log(a === b);
+
+    // js中的单例模式
+    // 1.使用命名空间
+    // 2.使用闭包封装私有变量
+    // var user = (function() {
+    //     var _name = 'sven',
+    //         _age = 29;
+        
+    //     return {
+    //         getUserInfo () {
+    //             return _name + '-' + _age;
+    //         }
+    //     }
+    // })();
+    // var user2 = (function() {
+    //     var _name = 'sven22',
+    //         _age = 50;
+        
+    //     return {
+    //         getUserInfo () {
+    //             return _name + '-' + _age;
+    //         }
+    //     }
+    // })()
+    // console.log(user.getUserInfo())
+    // console.log(user2.getUserInfo())
+
+    // 惰性单例
+    // 惰性单例指的是在需要的时候才创建对象实例,是单例模式的重点
+
+    // 浮窗demo
+    // 缺点 1.违反单一职责原则;2.标签无扩展性
+    // var createLoginLayer = (function() {
+    //     var div;
+    //     return function() {
+    //         if (!div) {
+    //             div = document.createElement('div');
+    //             div.innerHTML = '我的登录浮窗';
+    //             div.style.display = 'none';
+    //             document.body.appendChild(div);
+    //         }
+
+    //         return div;
+    //     }
+    // })();
+
+    // document.getElementById('login').onclick = function() {
+    //     var loginLayer = createLoginLayer();
+    //     loginLayer.style.display = 'block';
+    // }
+
+    // 通用的单例模式
+    var getSingle = function(fn) {
+        var result;
+        return function() {
+            return result || (result = fn.apply(this, arguments));
+        }
+    }
+    var createLoginLayer = function () {
+        var div = document.createElement('div');
+        div.innerHTML = '我是登录浮窗';
+        div.style.display = 'none';
+        document.body.appendChild(div);
+        return div;
+    }
+    var createSingleLoginLayer = getSingle(createLoginLayer);
+
+    document.getElementById('login').onclick = function() {
+        var loginLayer = createSingleLoginLayer();
+        loginLayer.style.display = 'block';
+    }
+</script>
+</html>
